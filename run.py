@@ -24,15 +24,12 @@ def get_comments(skuID):
 		json_data = sb.find_element( By.CSS_SELECTOR , 'pre' ).get_attribute('textContent')
 
 		states = Json.loads(json_data)['widgetStates']
-		states = [states[k] for k in states.keys() if rx_match.match(k)]
-
-		if not states:
-			raise Exception('No comments')
+		states = [states[k] for k in Json.loads(json_data)['widgetStates'] if rx_match.match(k)]
 
 		for comment in states:
 			try :
 				results.append(Json.loads(comment))
-			except exception:
+			except:
 				pass
 
 	return results
