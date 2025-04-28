@@ -28,13 +28,14 @@ def get_comments(skuID):
 
 		for comment in states:
 			try :
-				results.append(Json.loads(comment))
-			except:
-				pass
+				for review in Json.loads(comment)['reviews']:
+					results.append(review['content']['comment'])
+			except Exception as exception:
+				print(exception)
 
 	return results
 
 """
 Тестирование
 """
-print(get_comments(skuID))
+with open('out.txt', 'w') as fh: Json.dump(get_comments(skuID), fh)
