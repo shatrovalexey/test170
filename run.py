@@ -2,7 +2,7 @@
 
 import json as Json
 import re as Regexp
-import sys
+import sys as Sys
 from seleniumbase import SB
 from selenium.webdriver.common.by import By
 
