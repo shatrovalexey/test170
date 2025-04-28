@@ -6,9 +6,9 @@ import sys as Sys
 from seleniumbase import SB
 from selenium.webdriver.common.by import By
 
-if len(sys.argv) < 2: throw Exception('Usage: ./run.py <skuID>')
+if len(Sys.argv) < 2: throw Exception('Usage: ./run.py <skuID>')
 
-skuID = sys.argv[1]
+skuID = Sys.argv[1]
 url = 'https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=%%2Fproduct%%2F%d%%2F%%3Flayout_container%%3Dreviewshelfpaginator&__rr=1&abt_att=1'
 rx_match = Regexp.compile('^webListReviews-[0-9]+-reviewshelfpaginator-[0-9]+$')
 
