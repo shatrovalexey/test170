@@ -5,8 +5,8 @@
 
 ### СИСТЕМНЫЕ ТРЕБОВАНИЯ
 * Python v>=3.8x
-* seleniumbase
-* selenium
+* Пакет selenium_base
+* Пакет selenium
 
 ### ЗАПУСК
 * ./run.py <skuID>
