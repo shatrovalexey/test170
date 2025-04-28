@@ -6,7 +6,8 @@ import sys as Sys
 from seleniumbase import SB
 from selenium.webdriver.common.by import By
 
-if len(Sys.argv) < 2: raise Exception('Usage: ./run.py <skuID>')
+if len(Sys.argv) < 2:
+	raise Exception('Usage: ./run.py <skuID>')
 
 sku_id = int(Sys.argv[1])
 url_pattern = 'https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=%%2Fproduct%%2F%d%%2F%%3Flayout_container%%3Dreviewshelfpaginator&__rr=1&abt_att=1'
@@ -20,15 +21,15 @@ def get_page_data(sku_id):
 		url = url_pattern % sku_id
 		sb.open(url)
 
-		return sb.find_element(By.CSS_SELECTOR, 'pre').get_attribute('textContent')
+		return sb.find_element(By.TAG_NAME, 'pre').get_attribute('textContent')
 
 """
 Получить комментарии по товару по его артикулу
 """
-def get_comments(sku_id):
+def get_page_comments(page_data):
 	results = []
 
-	for comment_key, comment in Json.loads(get_page_data(sku_id))['widgetStates'].items():
+	for comment_key, comment in Json.loads(page_data)['widgetStates'].items():
 		if not rx_match.match(comment_key):
 			continue
 
@@ -40,4 +41,7 @@ def get_comments(sku_id):
 """
 Тестирование
 """
-Json.dump(get_comments(sku_id), Sys.stdout)
+page_data = get_page_data(sku_id)
+page_comments = get_page_comments(page_data)
+
+Json.dump(page_comments, Sys.stdout)
