@@ -6,7 +6,7 @@ import sys as Sys
 from seleniumbase import SB
 from selenium.webdriver.common.by import By
 
-if len(Sys.argv) < 2: throw Exception('Usage: ./run.py <skuID>')
+if len(Sys.argv) < 2: raise Exception('Usage: ./run.py <skuID>')
 
 skuID = Sys.argv[1]
 url = 'https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=%%2Fproduct%%2F%d%%2F%%3Flayout_container%%3Dreviewshelfpaginator&__rr=1&abt_att=1'
@@ -19,7 +19,7 @@ def get_comments(skuID):
 	results = []
 
 	with SB(test=False, uc=True, headless2=True, undetectable=True) as sb:
-		sb.open(url % (skuID))
+		sb.open(url % (int(skuID)))
 
 		json_data = sb.find_element( By.CSS_SELECTOR , 'pre' ).get_attribute('textContent')
 
@@ -35,7 +35,7 @@ def get_comments(skuID):
 			except exception:
 				raise exception
 
-		return results
+	return results
 
 """
 Тестирование
