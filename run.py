@@ -33,7 +33,7 @@ def get_comments(skuID):
 			try :
 				results.append(Json.loads(comment))
 			except exception:
-				raise exception
+				pass
 
 	return results
 
