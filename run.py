@@ -1,47 +1,62 @@
 #!python3
 
+import sys as Sys
+
+"""
+Получить номер артикула из STDIN
+"""
+if (len(Sys.argv) < 2) or not Sys.argv[1].isdigit():
+	raise Exception('Usage: "%s" "%s" <skuID>' % (Sys.executable, Sys.argv[0]))
+
+id_sku = Sys.argv[1]
+
 import json as Json
 import re as Regexp
-import sys as Sys
+import urllib.parse as UrlParse
 from seleniumbase import SB
 from selenium.webdriver.common.by import By
 
-if len(Sys.argv) < 2:
-	raise Exception('Usage: ./run.py <skuID>')
-
-sku_id = int(Sys.argv[1])
-url_pattern = 'https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url=%%2Fproduct%%2F%d%%2F%%3Flayout_container%%3Dreviewshelfpaginator&__rr=1&abt_att=1'
-rx_match = Regexp.compile('^webListReviews-[0-9]+-reviewshelfpaginator-[0-9]+$')
+"""
+Сообщение в STDERR
+"""
+def warn(msg):
+	return print("\n<<STDERR:%s\n" % msg, Sys.stderr)
 
 """
 Получить JSON страницы
 """
-def get_page_data(sku_id):
+def get_page_data(id_sku):
+	url_start = 'https://www.ozon.ru/api/entrypoint-api.bx/page/json/v2?url='
+	url_part = UrlParse.quote_plus('/product/' + UrlParse.quote_plus(id_sku) + '/?layout_container=reviewshelfpaginator')
+	url = url_start + url_part + '&__rr=1&abt_att=1'
+
 	with SB(test=False, uc=True, headless2=True, undetectable=True) as sb:
-		url = url_pattern % sku_id
-		sb.open(url)
+		while True:
+			warn(url)
 
-		return sb.find_element(By.TAG_NAME, 'pre').get_attribute('textContent')
+			sb.open(url)
+
+			page_data = sb.find_element(By.TAG_NAME, 'pre').get_attribute('textContent')
+			json_data = Json.loads(page_data)
+
+			yield json_data['widgetStates']
+
+			url = url_start + UrlParse.quote_plus(json_data['nextPage'])
 
 """
-Получить комментарии по товару по его артикулу
+Получить комментарии о товаре по его артикулу
 """
-def get_page_comments(page_data):
-	results = []
+def get_page_comments(id_sku):
+	rx_match = Regexp.compile('^webListReviews-[0-9]+-reviewshelfpaginator-[0-9]+$')
 
-	for comment_key, comment in Json.loads(page_data)['widgetStates'].items():
-		if not rx_match.match(comment_key):
-			continue
-
-		for review in Json.loads(comment)['reviews']:
-			results.append(review['content']['comment'])
-
-	return results
+	for page_data in get_page_data(id_sku):
+		for comment_key, comment in page_data.items():
+			if rx_match.match(comment_key):
+				for review in Json.loads(comment)['reviews']:
+					yield review['content']['comment']
 
 """
 Тестирование
 """
-page_data = get_page_data(sku_id)
-page_comments = get_page_comments(page_data)
-
-Json.dump(page_comments, Sys.stdout)
+for page_comments in get_page_comments(id_sku):
+	print(Json.dumps(page_comments) + "\n")
