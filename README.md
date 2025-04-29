@@ -8,8 +8,7 @@
 * Пакет selenium_base
 
 ### ЗАПУСК
-* ./run.py <skuID>
-* ещё пример: python3 run.py 184892734
+* "$(which python3)" 'run.py' '184892734'
 
 ### АВТОР
 Шатров Алексей Сергеевич <mail@ashatrov.ru>
