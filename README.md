@@ -8,7 +8,8 @@
 * Пакет selenium_base
 
 ### ЗАПУСК
-* "$(which python3)" 'run.py' '184892734'
+* `"$(which python3)" 'run.py' 'номер артикула'`
+* Например: `"$(which python3)" 'run.py' '184892734'`
 
 ### АВТОР
 Шатров Алексей Сергеевич <mail@ashatrov.ru>
