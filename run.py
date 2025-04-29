@@ -59,4 +59,5 @@ def get_page_comments(id_sku):
 Тестирование
 """
 for page_comments in get_page_comments(id_sku):
-	print(Json.dumps(page_comments) + "\n")
+	Json.dump(page_comments, Sys.stdout, ensure_ascii=False)
+	print()
